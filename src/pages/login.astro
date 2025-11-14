@@ -1,24 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-export const prerender = false;
-
-if (Astro.request.method === 'POST') {
-  const data = await Astro.request.formData();
-  const password = data.get('password');
-  
-  // Simple password check - change this to whatever you want
-  if (password === 'GroundGame2025!') {
-    // Set a cookie to remember login
-    Astro.cookies.set('admin_session', 'logged_in', {
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict'
-    });
-    return Astro.redirect('/community');
-  }
-}
 ---
 
 <Layout title="Admin Login - Ground Game Guidance">
@@ -29,7 +10,7 @@ if (Astro.request.method === 'POST') {
         <p class="text-center text-gray-400">Enter your password to access the community</p>
       </div>
       
-      <form method="POST" class="mt-8 space-y-6">
+      <form id="loginForm" class="mt-8 space-y-6">
         <div>
           <label for="password" class="block text-sm font-medium text-gray-300 mb-2">
             Password
@@ -43,7 +24,9 @@ if (Astro.request.method === 'POST') {
             placeholder="Enter admin password"
           />
         </div>
-
+        
+        <div id="error" class="hidden text-red-500 text-sm">Incorrect password</div>
+        
         <div>
           <button
             type="submit"
@@ -53,10 +36,30 @@ if (Astro.request.method === 'POST') {
           </button>
         </div>
       </form>
-
+      
       <div class="text-center text-sm text-gray-400">
         <p>For community members: Access granted after payment</p>
       </div>
     </div>
   </div>
+  
+  <script>
+    document.getElementById('loginForm')?.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const password = (document.getElementById('password') as HTMLInputElement)?.value;
+      const errorDiv = document.getElementById('error');
+      
+      if (password === 'GroundGame2025!') {
+        // Set a session storage flag
+        sessionStorage.setItem('admin_logged_in', 'true');
+        // Redirect to community
+        window.location.href = '/community';
+      } else {
+        // Show error
+        if (errorDiv) {
+          errorDiv.classList.remove('hidden');
+        }
+      }
+    });
+  </script>
 </Layout>
