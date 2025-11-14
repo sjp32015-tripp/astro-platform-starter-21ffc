@@ -1,0 +1,61 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+if (Astro.request.method === 'POST') {
+  const data = await Astro.request.formData();
+  const password = data.get('password');
+  
+  // Simple password check - change this to whatever you want
+  if (password === 'GroundGame2025!') {
+    // Set a cookie to remember login
+    Astro.cookies.set('admin_session', 'logged_in', {
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict'
+    });
+    return Astro.redirect('/community');
+  }
+}
+---
+
+<Layout title="Admin Login - Ground Game Guidance">
+  <div class="min-h-screen flex items-center justify-center py-12 px-4">
+    <div class="max-w-md w-full space-y-8 bg-gray-900/50 backdrop-blur-sm border border-gray-700 rounded-lg p-8">
+      <div>
+        <h2 class="text-3xl font-bold text-center text-white mb-2">Admin Login</h2>
+        <p class="text-center text-gray-400">Enter your password to access the community</p>
+      </div>
+      
+      <form method="POST" class="mt-8 space-y-6">
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-300 mb-2">
+            Password
+          </label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            required
+            class="appearance-none relative block w-full px-3 py-3 border border-gray-600 bg-gray-800 placeholder-gray-400 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            placeholder="Enter admin password"
+          />
+        </div>
+
+        <div>
+          <button
+            type="submit"
+            class="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-all duration-200 transform hover:scale-105"
+          >
+            Sign In
+          </button>
+        </div>
+      </form>
+
+      <div class="text-center text-sm text-gray-400">
+        <p>For community members: Access granted after payment</p>
+      </div>
+    </div>
+  </div>
+</Layout>
